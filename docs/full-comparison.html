@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>前端构建工具全方位深度对比</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg-card: #1a1d27;
+    --bg-table: #161922;
+    --bg-row-hover: #1f2330;
+    --border: #2a2e3a;
+    --text: #e1e4eb;
+    --text-dim: #8b8fa7;
+    --text-heading: #f0f2f7;
+    --accent: #6c8cff;
+    --accent-hover: #8da5ff;
+    --green: #4ade80;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --orange: #fb923c;
+    --purple: #a78bfa;
+    --cyan: #22d3ee;
+    --pink: #f472b6;
+    --nav-active: #6c8cff;
+    --insight-bg: #1e2235;
+    --tag-webpack: #8dd6f9;
+    --tag-vite: #a37bfa;
+    --tag-rollup: #ef4444;
+    --tag-rolldown: #f97316;
+    --tag-rspack: #f59e0b;
+    --tag-esbuild: #fbbf24;
+    --tag-turbopack: #0ea5e9;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* ========== Hero ========== */
+  .hero {
+    text-align: center;
+    padding: 64px 24px 40px;
+    background: linear-gradient(135deg, #111425 0%, #0f1117 50%, #141728 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+  .hero p {
+    color: var(--text-dim);
+    font-size: 15px;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .hero .tools-bar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .tool-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .tool-badge .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ========== Nav ========== */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15, 17, 23, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sticky-nav::-webkit-scrollbar { height: 0; }
+  .nav-inner {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 16px;
+    gap: 0;
+  }
+  .nav-item {
+    padding: 14px 18px;
+    font-size: 13px;
+    color: var(--text-dim);
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .nav-item:hover { color: var(--text); }
+  .nav-item.active {
+    color: var(--nav-active);
+    border-bottom-color: var(--nav-active);
+  }
+
+  /* ========== Content ========== */
+  .content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  .section {
+    padding-top: 40px;
+  }
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: rgba(108, 140, 255, 0.15);
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .section-desc {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  /* ========== Table ========== */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 900px;
+  }
+  thead {
+    background: var(--bg-table);
+    position: sticky;
+    top: 0;
+  }
+  th {
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  th:first-child { min-width: 160px; }
+  td {
+    padding: 11px 14px;
+    border-bottom: 1px solid rgba(42, 46, 58, 0.5);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg-row-hover); }
+  td:first-child {
+    font-weight: 600;
+    color: var(--text-heading);
+    white-space: nowrap;
+  }
+
+  /* ========== Insight Card ========== */
+  .insight {
+    background: var(--insight-bg);
+    border: 1px solid rgba(108, 140, 255, 0.15);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .insight-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .insight p {
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* ========== Benchmark Chart ========== */
+  .chart-section { margin-bottom: 24px; }
+  .chart-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-heading);
+    margin-bottom: 14px;
+  }
+  .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .bar-label {
+    width: 90px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .bar-track {
+    flex: 1;
+    height: 32px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: fit-content;
+  }
+  .bar-value {
+    width: 80px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+
+  /* ========== Timeline ========== */
+  .timeline {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text-dim);
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .timeline .t-year { color: var(--accent); font-weight: 700; }
+  .timeline .t-tool { color: var(--text-heading); font-weight: 700; }
+  .timeline .t-dim { color: var(--text-dim); }
+  .timeline .t-arrow { color: var(--green); }
+  .timeline .t-note { color: var(--yellow); font-style: italic; }
+
+  /* ========== Selection Guide ========== */
+  .guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .guide-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+  .guide-card:hover { border-color: var(--accent); }
+  .guide-card h4 {
+    font-size: 15px;
+    color: var(--text-heading);
+    margin-bottom: 6px;
+  }
+  .guide-card .recommend {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .guide-card p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ========== Sub-heading ========== */
+  .sub-heading {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-heading);
+    margin: 28px 0 14px;
+  }
+
+  /* ========== Emoji ========== */
+  .check { color: var(--green); }
+  .warn  { color: var(--yellow); }
+  .cross { color: var(--red); }
+
+  /* ========== Responsive ========== */
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 26px; }
+    .guide-grid { grid-template-columns: 1fr; }
+    .nav-item { padding: 12px 14px; font-size: 12px; }
+    .content { padding: 0 14px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== Hero ==================== -->
+<div class="hero">
+  <h1>前端构建工具全方位深度对比</h1>
+  <p>七种主流构建工具 &middot; 九大维度 &middot; 基于 1000 模块实测数据</p>
+  <div class="tools-bar">
+    <span class="tool-badge"><span class="dot" style="background:#8dd6f9"></span>Webpack 5</span>
+    <span class="tool-badge"><span class="dot" style="background:#a37bfa"></span>Vite</span>
+    <span class="tool-badge"><span class="dot" style="background:#ef4444"></span>Rollup</span>
+    <span class="tool-badge"><span class="dot" style="background:#f97316"></span>Rolldown</span>
+    <span class="tool-badge"><span class="dot" style="background:#f59e0b"></span>Rspack</span>
+    <span class="tool-badge"><span class="dot" style="background:#fbbf24"></span>esbuild</span>
+    <span class="tool-badge"><span class="dot" style="background:#0ea5e9"></span>Turbopack</span>
+  </div>
+</div>
+
+<!-- ==================== Sticky Nav ==================== -->
+<div class="sticky-nav">
+  <div class="nav-inner">
+    <div class="nav-item active" onclick="scrollTo('s1',this)">一、基础信息</div>
+    <div class="nav-item" onclick="scrollTo('s2',this)">二、架构设计</div>
+    <div class="nav-item" onclick="scrollTo('s3',this)">三、配置体验</div>
+    <div class="nav-item" onclick="scrollTo('s4',this)">四、核心能力</div>
+    <div class="nav-item" onclick="scrollTo('s5',this)">五、构建性能</div>
+    <div class="nav-item" onclick="scrollTo('s6',this)">六、产物质量</div>
+    <div class="nav-item" onclick="scrollTo('s7',this)">七、插件生态</div>
+    <div class="nav-item" onclick="scrollTo('s8',this)">八、工程化集成</div>
+    <div class="nav-item" onclick="scrollTo('s9',this)">九、迁移与趋势</div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ==================== 一、基础信息 ==================== -->
+<div class="section" id="s1">
+  <div class="section-title"><span class="num">1</span>基础信息</div>
+  <p class="section-desc">定位、语言、社区、团队——了解每个工具"是谁"</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>维度</th><th>Webpack 5</th><th>Vite</th><th>Rollup</th><th>Rolldown</th><th>Rspack</th><th>esbuild</th><th>Turbopack</th></tr></thead>
+      <tbody>
+        <tr><td>定位</td><td>通用应用打包器</td><td>下一代前端开发与构建工具</td><td>ES 模块打包器（偏库）</td><td>Rollup 的 Rust 替代品</td><td>Webpack 的 Rust 替代品</td><td>极速 JS/TS 打包与转译器</td><td>Next.js 专用增量打包器</td></tr>
+        <tr><td>实现语言</td><td>JavaScript</td><td>JS（底层 Rolldown/esbuild）</td><td>JS（部分 Rust 解析）</td><td>Rust</td><td>Rust</td><td>Go</td><td>Rust</td></tr>
+        <tr><td>首次发布</td><td>2012</td><td>2020</td><td>2015</td><td>2024</td><td>2023</td><td>2020</td><td>2022</td></tr>
+        <tr><td>当前版本</td><td>5.108.1</td><td>8.1.0</td><td>4.61.1</td><td>1.1.1</td><td>2.1.1</td><td>0.28.1</td><td>随 Next.js 16</td></tr>
+        <tr><td>GitHub Stars</td><td>~65.8K</td><td>~81.7K</td><td>~26.3K</td><td>~13.8K</td><td>~12.8K</td><td>~40.0K</td><td>~30.6K*</td></tr>
+        <tr><td>npm 周下载</td><td>~49.5M</td><td>~141M</td><td>~122M</td><td>~67.9M*</td><td>~5.9M</td><td>~197.5M*</td><td>无独立包</td></tr>
+        <tr><td>核心团队</td><td>Tobias Koppers + 社区</td><td>尤雨溪 + VoidZero</td><td>Lukas Taegert-Atkinson</td><td>尤雨溪 + VoidZero</td><td>字节跳动 Web Infra</td><td>Evan Wallace</td><td>Tobias Koppers + Vercel</td></tr>
+        <tr><td>适用场景</td><td>大型应用、复杂工程</td><td>通用 Web 应用、库</td><td>库、npm 包、框架</td><td>Vite 底层引擎、库</td><td>大型 Webpack 项目迁移</td><td>底层转译、简单打包</td><td>Next.js 应用</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="insight">
+    <div class="insight-label">关键洞察</div>
+    <p>Webpack 和 Rollup 是 JS 时代的开拓者，分别定义了"应用打包"和"库打包"两条路线。Rspack 和 Rolldown 分别是它们的 Rust 重写版，API 兼容但速度提升数十倍。Vite 站在中间做整合——开发用 ESM 原生加载，生产用 Rolldown（从 v8 开始）打包。esbuild 是底层基础设施，被 Vite、tsup、tsx 等大量工具依赖。Turbopack 目前与 Next.js 强绑定，无法独立使用。</p>
+  </div>
+</div>
+
+<!-- ==================== 二、架构设计 ==================== -->
+<div class="section" id="s2">
+  <div class="section-title"><span class="num">2</span>架构设计</div>
+  <p class="section-desc">打包策略、模块解析、HMR、缓存——工具的"灵魂"</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>维度</th><th>Webpack 5</th><th>Vite</th><th>Rollup</th><th>Rolldown</th><th>Rspack</th><th>esbuild</th><th>Turbopack</th></tr></thead>
+      <tbody>
+        <tr><td>打包策略</td><td>Bundle-based</td><td>开发 Unbundled + 生产 Bundle</td><td>Bundle-based</td><td>Bundle-based</td><td>Bundle-based</td><td>Bundle-based</td><td>增量 Bundle</td></tr>
+        <tr><td>开发/生产统一</td><td class="check">✅ 统一</td><td class="cross">❌ 不统一</td><td class="cross">❌ 无 dev server</td><td class="cross">❌ 无 dev server</td><td class="check">✅ 统一</td><td class="cross">❌ 无 dev server</td><td class="check">✅ 统一（增量）</td></tr>
+        <tr><td>模块解析</td><td>enhanced-resolve</td><td>浏览器 ESM / Rolldown</td><td>@rollup/pluginutils</td><td>oxc（Rust）</td><td>enhanced-resolve 兼容</td><td>Go 自有解析器</td><td>Rust 增量解析</td></tr>
+        <tr><td>ESM</td><td class="check">✅</td><td class="check">✅ 原生驱动</td><td class="check">✅ 优先</td><td class="check">✅ 原生</td><td class="check">✅</td><td class="check">✅ 优先</td><td class="check">✅</td></tr>
+        <tr><td>CJS</td><td class="check">✅ 原生</td><td class="check">✅ 预构建转换</td><td class="warn">⚠️ 需插件</td><td class="check">✅ 原生</td><td class="check">✅ 原生</td><td class="check">✅ 原生</td><td class="check">✅ 原生</td></tr>
+        <tr><td>输出格式</td><td>ESM/CJS/UMD/AMD/SystemJS</td><td>ESM/CJS/UMD</td><td>ESM/CJS/UMD/IIFE/AMD/SystemJS</td><td>ESM/CJS/IIFE</td><td>ESM/CJS/UMD</td><td>ESM/CJS/IIFE</td><td>ESM</td></tr>
+        <tr><td>HMR</td><td>自有运行时 + WebSocket</td><td>ESM HMR（模块级）</td><td>无内置</td><td>无内置</td><td>兼容 Webpack HMR</td><td>无内置</td><td>Turbo HMR（增量）</td></tr>
+        <tr><td>缓存</td><td>filesystem cache</td><td>esbuild 预构建缓存</td><td>无</td><td>内置增量缓存</td><td>内置持久化缓存</td><td>无</td><td>函数级别增量缓存</td></tr>
+        <tr><td>并行能力</td><td>有限（JS 单线程）</td><td>esbuild 多线程</td><td>单线程</td><td>Rust 原生多线程</td><td>Rust 原生多线程</td><td>Go 原生多线程</td><td>Rust 原生多线程</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="insight">
+    <div class="insight-label">关键洞察</div>
+    <p>Vite 的"开发 Unbundled + 生产 Bundle"双架构是一把双刃剑：开发体验极好（毫秒级启动），但开发和生产行为不完全一致可能导致"开发没问题、上线才暴露"的情况。Webpack/Rspack 的统一架构虽然开发启动慢一些，但行为一致性更强。Turbopack 的增量计算引擎是最激进的设计——只重新构建真正变化的部分，理论上 HMR 速度不随项目规模增长。</p>
+  </div>
+</div>
+
+<!-- ==================== 三、配置与开发体验 ==================== -->
+<div class="section" id="s3">
+  <div class="section-title"><span class="num">3</span>配置与开发体验</div>
+  <p class="section-desc">零配置能力、学习曲线、错误信息——日常开发的"手感"</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>维度</th><th>Webpack 5</th><th>Vite</th><th>Rollup</th><th>Rolldown</th><th>Rspack</th><th>esbuild</th><th>Turbopack</th></tr></thead>
+      <tbody>
+        <tr><td>零配置能力</td><td class="cross">❌ 必须手写</td><td class="check">✅ 大部分零配置</td><td class="cross">❌ 需配置插件链</td><td class="warn">⚠️ 基础可零配置</td><td class="warn">⚠️ 兼容 Webpack</td><td class="check">✅ CLI 直接用</td><td class="check">✅ Next.js 内置</td></tr>
+        <tr><td>配置文件</td><td>JS/TS（需 ts-node）</td><td>JS/TS（原生）</td><td>JS/TS（需 --configPlugin）</td><td>JS/MJS</td><td>JS/TS（需 ts-node）</td><td>JS API / CLI flags</td><td>next.config.js</td></tr>
+        <tr><td>学习曲线</td><td>🔴 陡峭</td><td>🟢 平缓</td><td>🟡 中等</td><td>🟢 平缓</td><td>🟡 中等</td><td>🟢 平缓</td><td>🟢 平缓</td></tr>
+        <tr><td>错误信息</td><td>🟡 中等</td><td>🟢 精确高亮</td><td>🟡 中等</td><td>🟢 Rust 风格</td><td>🟢 Rust 风格</td><td>🟢 简洁直接</td><td>🟢 Next.js 封装</td></tr>
+        <tr><td>Dev Server</td><td>webpack-dev-server</td><td>内置（Connect）</td><td>无（需插件）</td><td>无（通过 Vite）</td><td>@rspack/dev-server</td><td>内置 serve</td><td>内置（Next.js）</td></tr>
+        <tr><td>类型提示</td><td class="check">✅ Configuration</td><td class="check">✅ defineConfig</td><td class="check">✅ defineConfig</td><td class="check">✅ defineConfig</td><td class="check">✅ Configuration</td><td class="check">✅ BuildOptions</td><td class="check">✅ Next.js 类型</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="insight">
+    <div class="insight-label">关键洞察</div>
+    <p>Webpack 需要 ts-loader + css-loader + style-loader + MiniCssExtractPlugin + HtmlWebpackPlugin + TerserPlugin 一整套工具链才能搞定一个标准 React 项目。同样的事情在 Vite 里只需要一个 @vitejs/plugin-react。但 Webpack 的灵活性无可替代：Module Federation、自定义资源处理流水线等非标准需求，只有 Webpack 能做。</p>
+  </div>
+</div>
+
+<!-- ==================== 四、核心能力 ==================== -->
+<div class="section" id="s4">
+  <div class="section-title"><span class="num">4</span>核心能力对比</div>
+  <p class="section-desc">TS 转译、CSS 处理、静态资源、代码分割、Tree Shaking</p>
+
+  <h3 class="sub-heading">4.1 TypeScript 处理</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>维度</th><th>Webpack 5</th><th>Vite</th><th>Rollup</th><th>Rolldown</th><th>Rspack</th><th>esbuild</th><th>Turbopack</th></tr></thead>
+      <tbody>
+        <tr><td>转译器</td><td>ts-loader / swc-loader</td><td>esbuild / Rolldown oxc</td><td>tsc（@rollup/plugin-ts）</td><td>oxc（内置）</td><td>SWC（内置）</td><td>esbuild（内置）</td><td>SWC（内置）</td></tr>
+        <tr><td>类型检查</td><td class="warn">⚠️ ts-loader 可选</td><td class="cross">❌ 需单独 tsc</td><td class="check">✅ 默认做</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+        <tr><td>Decorator</td><td class="check">✅</td><td class="check">✅</td><td class="check">✅</td><td class="check">✅</td><td class="check">✅</td><td class="warn">⚠️ 仅 TC39</td><td class="check">✅</td></tr>
+        <tr><td>const enum</td><td class="check">✅</td><td class="cross">❌</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+        <tr><td>转译速度</td><td>🔴 慢（tsc）</td><td>🟢 快（esbuild）</td><td>🔴 慢（tsc）</td><td>🟢 极快（oxc）</td><td>🟢 快（SWC）</td><td>🟢 极快（Go）</td><td>🟢 快（SWC）</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub-heading">4.2 CSS 处理</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>维度</th><th>Webpack 5</th><th>Vite</th><th>Rollup</th><th>Rolldown</th><th>Rspack</th><th>esbuild</th><th>Turbopack</th></tr></thead>
+      <tbody>
+        <tr><td>CSS Modules</td><td>css-loader options</td><td class="check">✅ 内置</td><td>rollup-plugin-postcss</td><td>需插件</td><td>css-loader / 内置</td><td class="warn">⚠️ 有限</td><td class="check">✅ 内置</td></tr>
+        <tr><td>PostCSS</td><td>postcss-loader</td><td class="check">✅ 自动读取配置</td><td>rollup-plugin-postcss</td><td>需插件</td><td>postcss-loader</td><td class="cross">❌</td><td class="check">✅ 内置</td></tr>
+        <tr><td>Sass/Less</td><td>对应 loader</td><td class="check">✅ 安装即用</td><td>rollup-plugin-postcss</td><td>需插件</td><td>对应 loader</td><td class="cross">❌</td><td class="check">✅ 内置</td></tr>
+        <tr><td>CSS 提取</td><td>MiniCssExtractPlugin</td><td class="check">✅ 自动</td><td>extract: true</td><td>需配置</td><td>CssExtractRspackPlugin</td><td class="cross">❌</td><td class="check">✅ 自动</td></tr>
+        <tr><td>Tailwind CSS</td><td>postcss-loader 配合</td><td class="check">✅ 开箱即用</td><td>需 PostCSS 链</td><td>需配置</td><td>postcss-loader 配合</td><td class="cross">❌</td><td class="check">✅ 内置</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub-heading">4.3 静态资源与代码分割</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>维度</th><th>Webpack 5</th><th>Vite</th><th>Rollup</th><th>Rolldown</th><th>Rspack</th><th>esbuild</th><th>Turbopack</th></tr></thead>
+      <tbody>
+        <tr><td>Code Splitting</td><td>SplitChunksPlugin + import()</td><td>manualChunks + import()</td><td>manualChunks + import()</td><td>advancedChunks + import()</td><td>SplitChunks（同 Webpack）</td><td>splitting: true（有限）</td><td>自动（增量）</td></tr>
+        <tr><td>分割灵活度</td><td>🟢 最灵活</td><td>🟡 中等</td><td>🟡 中等</td><td>🟡 中等</td><td>🟢 最灵活</td><td>🔴 有限</td><td>🟡 自动化</td></tr>
+        <tr><td>Tree Shaking</td><td class="check">✅ production mode</td><td class="check">✅ Rolldown 内置</td><td class="check">✅ 原生 ESM（最强）</td><td class="check">✅ 原生 ESM</td><td class="check">✅ production mode</td><td class="check">✅ 内置</td><td class="check">✅ 内置</td></tr>
+        <tr><td>HTML 处理</td><td>HtmlWebpackPlugin</td><td class="check">✅ 内置</td><td>需插件</td><td>需插件</td><td>HtmlRspackPlugin</td><td class="cross">❌</td><td class="check">✅ 内置</td></tr>
+        <tr><td>环境变量</td><td>DefinePlugin</td><td>import.meta.env.*</td><td>@rollup/plugin-replace</td><td>define 配置</td><td>DefinePlugin</td><td>define 配置</td><td>process.env / NEXT_PUBLIC_</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="insight">
+    <div class="insight-label">关键洞察</div>
+    <p>现代构建工具已经彻底放弃 tsc 做构建转译。esbuild / SWC / oxc 只做语法转换不做类型检查，速度快几十倍。最佳实践是：构建时用快速转译器，类型检查放在 IDE 实时检查 + CI 流水线的 tsc --noEmit 中。CSS 处理是 Webpack 配置复杂度的重灾区——同一个"导入 CSS"的需求，Webpack 需要四层 loader 配置，Vite 零配置开箱即用。</p>
+  </div>
+</div>
+
+<!-- ==================== 五、构建性能 ==================== -->
+<div class="section" id="s5">
+  <div class="section-title"><span class="num">5</span>构建性能（1000 模块实测）</div>
+  <p class="section-desc">Apple Silicon Mac &middot; Node v20.18.0 &middot; 4600+ 模块含依赖 &middot; 每工具 3 次取中位数</p>
+
+  <div class="chart-section">
+    <div class="chart-title">冷启动构建时间</div>
+    <div class="bar-chart">
+      <div class="bar-row">
+        <span class="bar-label">Rolldown</span>
+        <div class="bar-track"><div class="bar-fill" style="width:3%;background:linear-gradient(90deg,#f97316,#fb923c)">635 ms</div></div>
+        <span class="bar-value">🥇 1×</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Rspack</span>
+        <div class="bar-track"><div class="bar-fill" style="width:9.5%;background:linear-gradient(90deg,#f59e0b,#fbbf24)">2.36 s</div></div>
+        <span class="bar-value">🥈 3.7×</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Vite</span>
+        <div class="bar-track"><div class="bar-fill" style="width:21.5%;background:linear-gradient(90deg,#8b5cf6,#a78bfa)">5.39 s</div></div>
+        <span class="bar-value">🥉 8.5×</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Webpack 5</span>
+        <div class="bar-track"><div class="bar-fill" style="width:52.7%;background:linear-gradient(90deg,#3b82f6,#60a5fa)">13.18 s</div></div>
+        <span class="bar-value">20.8×</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Rollup</span>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#ef4444,#f87171)">25.01 s</div></div>
+        <span class="bar-value">39.4×</span>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub-heading">产物体积对比</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>工具</th><th>产物总大小</th><th>Gzip 大小</th><th>分包数</th><th>Tree Shaking</th></tr></thead>
+      <tbody>
+        <tr><td>Rspack</td><td>12.62 MB</td><td style="color:var(--green);font-weight:700">570.2 KB</td><td>3</td><td class="check">✅ PASS</td></tr>
+        <tr><td>Webpack 5</td><td>2.45 MB</td><td>577.4 KB</td><td>3</td><td class="check">✅ PASS</td></tr>
+        <tr><td>Vite</td><td>2.46 MB</td><td>632.6 KB</td><td>6</td><td class="check">✅ PASS</td></tr>
+        <tr><td>Rolldown</td><td>23.90 MB</td><td>1.61 MB</td><td>6</td><td class="check">✅ PASS</td></tr>
+        <tr><td>Rollup</td><td>33.09 MB</td><td>2.04 MB</td><td>14</td><td class="check">✅ PASS</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="insight">
+    <div class="insight-label">关键洞察</div>
+    <p>Rust/Go 实现的工具与 JS 工具之间存在数量级差距——Rolldown 比 Rollup 快 40 倍，这不是优化能弥补的，是底层语言的性能天花板决定的。体积方面 Rspack 的 SWC 压缩率最高（570 KB gzip），Rollup/Rolldown 产物偏大主要因为 sourcemap 被计入了总大小。</p>
+  </div>
+</div>
+
+<!-- ==================== 六、产物质量 ==================== -->
+<div class="section" id="s6">
+  <div class="section-title"><span class="num">6</span>产物质量</div>
+  <p class="section-desc">压缩方案、Scope Hoisting、Polyfill、运行时——产物的"品质"</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>维度</th><th>Webpack 5</th><th>Vite</th><th>Rollup</th><th>Rolldown</th><th>Rspack</th><th>esbuild</th><th>Turbopack</th></tr></thead>
+      <tbody>
+        <tr><td>压缩方案</td><td>Terser（JS，最慢最强）</td><td>esbuild / Rolldown</td><td>terser</td><td>oxc 压缩</td><td>SWC（Rust）</td><td>esbuild（Go）</td><td>SWC（Rust）</td></tr>
+        <tr><td>压缩率</td><td>🟢 最高</td><td>🟡 中等</td><td>🟢 高</td><td>🟡 中等</td><td>🟢 高</td><td>🟡 中等</td><td>🟢 高</td></tr>
+        <tr><td>Scope Hoisting</td><td class="check">✅</td><td class="check">✅</td><td class="check">✅ 原创发明</td><td class="check">✅</td><td class="check">✅</td><td class="warn">⚠️ 有限</td><td class="check">✅</td></tr>
+        <tr><td>产物可读性</td><td>🟡 多运行时代码</td><td>🟢 好</td><td>🟢 最好（最干净 ESM）</td><td>🟢 好</td><td>🟡 同 Webpack</td><td>🟡 中等</td><td>🟡 中等</td></tr>
+        <tr><td>Polyfill</td><td>babel + core-js</td><td>@vitejs/plugin-legacy</td><td>@rollup/plugin-babel</td><td>需插件</td><td>babel / SWC</td><td class="cross">❌</td><td>Next.js 内置</td></tr>
+        <tr><td>产物运行时</td><td>较重 __webpack_require__</td><td>无额外</td><td>极少</td><td>少量</td><td>同 Webpack</td><td>无额外</td><td>有运行时</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="insight">
+    <div class="insight-label">关键洞察</div>
+    <p>Rollup 的产物是所有工具中最干净的——输出代码最接近手写 ESM 模块，几乎无额外运行时。这是它作为库打包工具的核心优势。压缩器的选择体现速度和压缩率的权衡：Terser 压缩率最高但最慢，esbuild 最快但略低，SWC 是折中方案（接近 Terser 的效果但快得多）。</p>
+  </div>
+</div>
+
+<!-- ==================== 七、插件与生态 ==================== -->
+<div class="section" id="s7">
+  <div class="section-title"><span class="num">7</span>插件与生态</div>
+  <p class="section-desc">插件架构、生态丰富度、兼容关系——工具的"朋友圈"</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>维度</th><th>Webpack 5</th><th>Vite</th><th>Rollup</th><th>Rolldown</th><th>Rspack</th><th>esbuild</th><th>Turbopack</th></tr></thead>
+      <tbody>
+        <tr><td>插件架构</td><td>Tapable 钩子（最复杂）</td><td>Rollup API + Vite 钩子</td><td>标准 hooks</td><td>兼容 Rollup API</td><td>兼容 Webpack API</td><td>简洁 plugin API</td><td>私有（无公开）</td></tr>
+        <tr><td>生态丰富度</td><td>🟢 最丰富（10000+）</td><td>🟢 丰富（1000+）</td><td>🟢 丰富（500+）</td><td>🟡 兼容 Rollup</td><td>🟡 兼容 Webpack</td><td>🟡 有限（100+）</td><td>🔴 封闭</td></tr>
+        <tr><td>API 稳定性</td><td>🟢 成熟</td><td>🟢 稳定</td><td>🟢 成熟</td><td>🟡 演进中</td><td>🟡 快速迭代</td><td>🟢 稳定</td><td class="cross">❌ 无公开 API</td></tr>
+        <tr><td>Loader 机制</td><td class="check">✅ Loader chain</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td><td class="check">✅ 兼容 Webpack</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+        <tr><td>插件开发难度</td><td>🔴 高</td><td>🟡 中等</td><td>🟢 低</td><td>🟢 低</td><td>🔴 高</td><td>🟢 低</td><td class="cross">❌ 不支持</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="insight">
+    <div class="insight-label">生态兼容关系</div>
+    <p>Webpack 生态 → Rspack（大部分 loader/plugin 可直接用）；Rollup 插件生态 → Vite（完全兼容）→ Rolldown（部分兼容）；esbuild 被 Vite、tsup、tsx、vitest 等大量工具作为底层依赖。Turbopack 没有公开插件系统，是它最大的生态短板。</p>
+  </div>
+</div>
+
+<!-- ==================== 八、工程化集成 ==================== -->
+<div class="section" id="s8">
+  <div class="section-title"><span class="num">8</span>工程化集成</div>
+  <p class="section-desc">Monorepo、SSR、Library Mode、微前端、框架集成</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>维度</th><th>Webpack 5</th><th>Vite</th><th>Rollup</th><th>Rolldown</th><th>Rspack</th><th>esbuild</th><th>Turbopack</th></tr></thead>
+      <tbody>
+        <tr><td>Monorepo</td><td class="check">✅ 需配置</td><td class="check">✅ pnpm workspaces</td><td class="check">✅ 需配置</td><td class="check">✅</td><td class="check">✅</td><td class="check">✅ 需配置</td><td class="check">✅ Turborepo 原生</td></tr>
+        <tr><td>SSR</td><td class="check">✅ target: 'node'</td><td class="check">✅ 内置 SSR 模式</td><td class="warn">⚠️ 手动配置</td><td class="warn">⚠️ 手动配置</td><td class="check">✅</td><td class="warn">⚠️ platform: 'node'</td><td class="check">✅ Next.js 原生</td></tr>
+        <tr><td>Library Mode</td><td class="check">✅ output.library</td><td class="check">✅ build.lib</td><td style="color:var(--green);font-weight:700">🟢 最佳选择</td><td class="check">✅</td><td class="check">✅</td><td class="check">✅</td><td class="cross">❌</td></tr>
+        <tr><td>Module Federation</td><td class="check">✅ 原生支持</td><td class="warn">⚠️ 需插件</td><td class="cross">❌</td><td class="cross">❌</td><td class="check">✅ 原生支持</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+        <tr><td>微前端</td><td>🟢 最成熟</td><td>🟡 需社区方案</td><td class="cross">❌ 不适合</td><td class="cross">❌ 不适合</td><td>🟢 兼容 Webpack 方案</td><td class="cross">❌ 不适合</td><td class="cross">❌ 仅 Next.js</td></tr>
+        <tr><td>React</td><td>babel / ts-loader</td><td>@vitejs/plugin-react</td><td>@rollup/plugin-babel</td><td>内置 JSX</td><td>builtin:swc-loader</td><td>内置 JSX</td><td>Next.js 原生</td></tr>
+        <tr><td>Vue</td><td>vue-loader</td><td style="color:var(--green)">@vitejs/plugin-vue（最佳）</td><td>rollup-plugin-vue</td><td>需插件</td><td>vue-loader</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+        <tr><td>测试框架</td><td>Jest（需配置）</td><td style="color:var(--green)">Vitest（原生集成）</td><td>—</td><td>—</td><td>Jest / Vitest</td><td>—</td><td>Next.js testing</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="insight">
+    <div class="insight-label">关键洞察</div>
+    <p>微前端 / Module Federation 只有 Webpack 5 和 Rspack 成熟可用。Library Mode 首选 Rollup（React、Vue、Svelte 框架自身都用它构建）。Turbopack 的生态集成最窄——只支持 React（通过 Next.js），不支持 Vue/Svelte、Library Mode 和 Module Federation。</p>
+  </div>
+</div>
+
+<!-- ==================== 九、迁移与趋势 ==================== -->
+<div class="section" id="s9">
+  <div class="section-title"><span class="num">9</span>迁移成本与未来趋势</div>
+  <p class="section-desc">传承关系、迁移难度、前景判断、选型建议</p>
+
+  <h3 class="sub-heading">工具传承关系</h3>
+  <div class="timeline"><span class="t-year">2012</span> ──── <span class="t-tool">Webpack</span> ─────────────────────────────────────────────────▶
+              │                    <span class="t-year">2020</span>                    <span class="t-year">2023</span>
+              │                      │                       │
+              │                 <span class="t-tool">Webpack 5</span> ── <span class="t-arrow">API 兼容</span> ──▶ <span class="t-tool">Rspack</span>
+              │              <span class="t-note">(持久化缓存, Module Fed)</span>    <span class="t-note">(Rust 重写)</span>
+              │
+              └── <span class="t-dim">Webpack 作者 Tobias Koppers</span> ──── <span class="t-year">2022</span> ──▶ <span class="t-tool">Turbopack</span>
+                                                          <span class="t-note">(Rust 全新设计)</span>
+
+<span class="t-year">2015</span> ──── <span class="t-tool">Rollup</span> ──────────────────────────────────────────────────▶
+              │                    <span class="t-year">2020</span>          <span class="t-year">2024</span>
+              │                      │             │
+              │                   <span class="t-tool">Vite</span> ◀── <span class="t-arrow">底层</span> ── <span class="t-tool">Rolldown</span>
+              │             <span class="t-note">(dev: ESM + esbuild)</span>    <span class="t-note">(Rust 重写)</span>
+              │             <span class="t-note">(prod: Rollup → Rolldown)</span>
+
+<span class="t-year">2020</span> ──── <span class="t-tool">esbuild</span> ──── <span class="t-arrow">被 Vite 依赖</span> ────────────────────────────▶
+              <span class="t-note">(Go 实现，定义了"极速构建"的标杆)</span></div>
+
+  <h3 class="sub-heading">从 Webpack 迁移的难度</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>迁移到</th><th>难度</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>Rspack</td><td>🟢 低</td><td>API 几乎 100% 兼容，大部分项目改包名即可，是最低成本方案</td></tr>
+        <tr><td>Vite</td><td>🟡 中</td><td>配置需完全重写（loader → plugin），但源代码基本不改</td></tr>
+        <tr><td>Rollup</td><td>🔴 高</td><td>需重新设计构建流程，处理 HTML、dev server 等，不推荐应用项目迁移</td></tr>
+        <tr><td>Rolldown</td><td>🟡 中</td><td>兼容 Rollup 配置，但仍处早期，直接用不如通过 Vite 间接使用</td></tr>
+        <tr><td>esbuild</td><td>🔴 高</td><td>功能覆盖面窄，缺 CSS Modules、HTML 处理等，不适合替代 Webpack</td></tr>
+        <tr><td>Turbopack</td><td>🔴 高</td><td>必须迁移到 Next.js 框架，是整个技术栈的迁移而非构建工具替换</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub-heading">未来发展趋势</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>工具</th><th>趋势方向</th><th>前景</th></tr></thead>
+      <tbody>
+        <tr><td>Webpack 5</td><td>维护模式，不再有大的特性更新，社区逐步向 Rspack/Vite 迁移</td><td>存量长期存在，新项目选型减少</td></tr>
+        <tr><td>Vite</td><td>v8 底层切换到 Rolldown，开发/生产架构逐步统一，生态持续扩大</td><td style="color:var(--green);font-weight:600">🟢 最有前景的通用构建工具</td></tr>
+        <tr><td>Rollup</td><td>继续作为库打包标准，但逐步被 Rolldown 替代</td><td>稳定但不会爆发增长</td></tr>
+        <tr><td>Rolldown</td><td>作为 Vite 生产引擎已进入稳定阶段，独立使用场景在扩展</td><td style="color:var(--green)">🟢 前景好（主要通过 Vite 使用）</td></tr>
+        <tr><td>Rspack</td><td>字节内部大规模使用，持续完善 Webpack 兼容性</td><td style="color:var(--green)">🟢 存量 Webpack 项目最佳迁移方案</td></tr>
+        <tr><td>esbuild</td><td>作者已离开 Figma，更新节奏放缓，上层工具逐步减少依赖</td><td>🟡 仍被广泛依赖但依赖度在降</td></tr>
+        <tr><td>Turbopack</td><td>继续深度绑定 Next.js，短期不会成为独立工具</td><td>🟡 Next.js 用户受益</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub-heading">新项目选型建议</h3>
+  <div class="guide-grid">
+    <div class="guide-card">
+      <h4>通用 Web 应用（React / Vue / Svelte）</h4>
+      <div class="recommend">推荐 Vite</div>
+      <p>开发体验最好，生态丰富，社区最活跃，是当下最佳平衡点</p>
+    </div>
+    <div class="guide-card">
+      <h4>大型 Webpack 存量项目提速</h4>
+      <div class="recommend">推荐 Rspack</div>
+      <p>API 兼容 Webpack，迁移成本最低，构建速度立竿见影提升 5-10 倍</p>
+    </div>
+    <div class="guide-card">
+      <h4>打包 npm 库 / 框架</h4>
+      <div class="recommend">推荐 Rollup 或 Vite lib mode</div>
+      <p>产物最干净，Tree Shaking 最强，React/Vue/Svelte 自身都用它构建</p>
+    </div>
+    <div class="guide-card">
+      <h4>Next.js 应用</h4>
+      <div class="recommend">推荐 Turbopack</div>
+      <p>Next.js 原生集成，开箱即用，增量构建体验优秀</p>
+    </div>
+    <div class="guide-card">
+      <h4>需要极致构建速度的 CI/CD</h4>
+      <div class="recommend">推荐 esbuild（简单场景）/ Rolldown（复杂场景）</div>
+      <p>速度优先，适合对构建时间敏感的持续集成流水线</p>
+    </div>
+    <div class="guide-card">
+      <h4>新项目且不确定技术栈</h4>
+      <div class="recommend">推荐 Vite</div>
+      <p>社区趋势、生态丰富度、性能表现的最佳平衡点，未来可平滑演进</p>
+    </div>
+  </div>
+
+  <div class="insight">
+    <div class="insight-label">总结</div>
+    <p>前端构建工具的竞争本质上是"用什么语言写构建工具"的竞争。Webpack 和 Rollup 作为 JS 实现的开拓者定义了规则，而 Rspack 和 Rolldown 作为 Rust 重写版正在继承规则的同时打破速度瓶颈。Vite 则站在中间，用巧妙的架构设计在当下取得了最好的平衡。选择工具时，不要只看速度——配置复杂度、插件生态、迁移成本和团队熟悉度同样重要。</p>
+  </div>
+</div>
+
+</div><!-- .content -->
+
+<script>
+function scrollTo(id, el) {
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
+// Intersection Observer for sticky nav active state
+const sections = document.querySelectorAll('.section');
+const navItems = document.querySelectorAll('.nav-item');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navItems.forEach((item, i) => {
+        item.classList.toggle('active', item.getAttribute('onclick').includes(id));
+      });
+    }
+  });
+}, { rootMargin: '-80px 0px -70% 0px', threshold: 0 });
+sections.forEach(s => observer.observe(s));
+
+// Animate bars on scroll
+const barObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.bar-fill').forEach(bar => {
+        const w = bar.style.width;
+        bar.style.width = '0%';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => { bar.style.width = w; });
+        });
+      });
+      barObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.bar-chart').forEach(c => barObserver.observe(c));
+</script>
+</body>
+</html>

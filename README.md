@@ -2,6 +2,11 @@
 
 > 用同一套源代码，对比 Webpack 5 / Vite / Rollup / Rolldown / Rspack 五种主流构建工具在配置方式、功能支持和构建性能上的差异。
 
+## 学习文档
+
+- [**全方位深度对比表格**](docs/full-comparison.md) — 九大维度（基础信息、架构设计、配置体验、核心能力、构建性能、产物质量、插件生态、工程化集成、迁移与趋势）对比 7 种构建工具（含 esbuild、Turbopack）
+- [**性能测试报告**](docs/benchmark-report.md) — 基于本项目 1000 模块的实测数据
+
 ## 项目结构
 
 ```
