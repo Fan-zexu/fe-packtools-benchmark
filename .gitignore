@@ -1,0 +1,33 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist-webpack/
+dist-vite/
+dist-rollup/
+dist-rolldown/
+dist-rspack/
+
+# 批量生成的模块（可通过 npm run generate 重新生成）
+src/generated/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 日志
+*.log
+npm-debug.log*
+
+# TypeScript 缓存
+*.tsbuildinfo
+
+# 性能测试临时文件
+.cache/
+configs/rolldown/rolldown.config.CmVcNZD6.js
